@@ -286,16 +286,21 @@
     transition: transform 0.2s;
   }
   .dropdown.open .dropdown-chevron { transform: rotate(180deg); }
-  /* Options panel — sits below preview, in normal flow */
-  .dropdown-options {
-    margin-top: 12px;
+  /* Dropdown menu — standard overlay below trigger */
+  .dropdown-menu {
+    position: absolute;
+    top: calc(100% + 4px);
+    left: 0; right: 0;
     background: var(--bg-primary);
     border: 1px solid var(--border-primary);
     border-radius: 8px;
-    padding: 4px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    z-index: 10;
     display: none;
+    overflow: hidden;
+    padding: 4px;
   }
-  .dropdown.open .dropdown-options { display: block; }
+  .dropdown.open .dropdown-menu { display: block; }
   .dropdown-option {
     padding: 8px 10px;
     font-size: 12px;
@@ -343,7 +348,6 @@
 
   /* ========== PREVIEW ========== */
   .preview-box {
-    margin-top: 16px;
     background: var(--bg-secondary);
     border: 1px solid var(--border-primary);
     border-radius: 6px;
@@ -354,7 +358,6 @@
   }
   /* Text-only previews get fixed height; card previews grow to fit */
   .preview-box.fixed { height: 138px; }
-  .radio-group + .preview-box { margin-top: 40px; }
   .preview-label {
     font-family: 'IBM Plex Mono', monospace;
     font-size: 8px;
@@ -524,11 +527,7 @@
         <div class="config-section">
           <h2 class="section-heading">Chief Complaints</h2>
           <p class="section-desc">Choose how the <strong>"reason for visit"</strong> appears at the top of every note.</p>
-          <div class="section-controls dropdown" id="dd-cc">
-            <div class="dropdown-trigger" onclick="toggleDD('dd-cc')">
-              <span id="cc-label">Short Label Only</span>
-              <svg class="dropdown-chevron" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6l4 4 4-4"/></svg>
-            </div>
+          <div class="section-controls">
             <div class="preview-box fixed">
               <div class="preview-label">PREVIEW</div>
               <div class="preview-content-area">
@@ -539,11 +538,17 @@
                 </div>
               </div>
             </div>
-            <div class="dropdown-options">
-              <div class="dropdown-option selected" onclick="pickCC(0)" onmouseenter="previewCC(0)">Short Label Only</div>
-              <div class="dropdown-option" onclick="pickCC(1)" onmouseenter="previewCC(1)">Brief with context added</div>
-              <div class="dropdown-option" onclick="pickCC(2)" onmouseenter="previewCC(2)">Narrative</div>
-              <div class="dropdown-option" onclick="pickCC(3)" onmouseenter="previewCC(3)">Patient-reported</div>
+            <div class="dropdown" id="dd-cc" style="position:relative; margin-top:16px;">
+              <div class="dropdown-trigger" onclick="toggleDD('dd-cc')">
+                <span id="cc-label">Short Label Only</span>
+                <svg class="dropdown-chevron" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6l4 4 4-4"/></svg>
+              </div>
+              <div class="dropdown-menu">
+                <div class="dropdown-option selected" onclick="pickCC(0)" onmouseenter="previewCC(0)">Short Label Only</div>
+                <div class="dropdown-option" onclick="pickCC(1)" onmouseenter="previewCC(1)">Brief with context added</div>
+                <div class="dropdown-option" onclick="pickCC(2)" onmouseenter="previewCC(2)">Narrative</div>
+                <div class="dropdown-option" onclick="pickCC(3)" onmouseenter="previewCC(3)">Patient-reported</div>
+              </div>
             </div>
           </div>
         </div>
@@ -553,7 +558,11 @@
           <h2 class="section-heading">Assessment</h2>
           <p class="section-desc">Display ICD-10 codes alongside each diagnosis in the Assessment.</p>
           <div class="section-controls">
-            <div class="radio-group" id="rg-assess">
+            <div class="preview-box">
+              <div class="preview-label">PREVIEW</div>
+              <div id="assess-preview"></div>
+            </div>
+            <div class="radio-group" id="rg-assess" style="margin-top:24px;">
               <label class="radio-label selected" onclick="pickAssess(true)">
                 <span class="radio-dot"><span class="radio-dot-inner"></span></span>
                 Yes
@@ -563,10 +572,6 @@
                 No
               </label>
             </div>
-            <div class="preview-box">
-              <div class="preview-label">PREVIEW</div>
-              <div id="assess-preview"></div>
-            </div>
           </div>
         </div>
 
@@ -574,21 +579,23 @@
         <div class="config-section">
           <h2 class="section-heading">Diagnosis style</h2>
           <p class="section-desc">Set the format for how diagnoses are written</p>
-          <div class="section-controls dropdown" id="dd-ds">
-            <div class="dropdown-trigger" onclick="toggleDD('dd-ds')">
-              <span id="ds-label">Full terminology</span>
-              <svg class="dropdown-chevron" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6l4 4 4-4"/></svg>
-            </div>
+          <div class="section-controls">
             <div class="preview-box fixed">
               <div class="preview-label">PREVIEW</div>
               <div class="preview-content-area">
                 <div class="preview-text" id="ds-preview"></div>
               </div>
             </div>
-            <div class="dropdown-options">
-              <div class="dropdown-option selected" onclick="pickDS(0)" onmouseenter="previewDS(0)">Full terminology</div>
-              <div class="dropdown-option" onclick="pickDS(1)" onmouseenter="previewDS(1)">Abbreviated</div>
-              <div class="dropdown-option" onclick="pickDS(2)" onmouseenter="previewDS(2)">Concise</div>
+            <div class="dropdown" id="dd-ds" style="position:relative; margin-top:16px;">
+              <div class="dropdown-trigger" onclick="toggleDD('dd-ds')">
+                <span id="ds-label">Full terminology</span>
+                <svg class="dropdown-chevron" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6l4 4 4-4"/></svg>
+              </div>
+              <div class="dropdown-menu">
+                <div class="dropdown-option selected" onclick="pickDS(0)" onmouseenter="previewDS(0)">Full terminology</div>
+                <div class="dropdown-option" onclick="pickDS(1)" onmouseenter="previewDS(1)">Abbreviated</div>
+                <div class="dropdown-option" onclick="pickDS(2)" onmouseenter="previewDS(2)">Concise</div>
+              </div>
             </div>
           </div>
         </div>
@@ -598,7 +605,13 @@
           <h2 class="section-heading">Medication detail</h2>
           <p class="section-desc">Control how medications appear in the plan section</p>
           <div class="section-controls">
-            <div class="radio-group" id="rg-med">
+            <div class="preview-box">
+              <div class="preview-label">PREVIEW</div>
+              <div class="preview-content-area">
+                <div id="med-preview"></div>
+              </div>
+            </div>
+            <div class="radio-group" id="rg-med" style="margin-top:24px;">
               <label class="radio-label selected" onclick="pickMed(true)">
                 <span class="radio-dot"><span class="radio-dot-inner"></span></span>
                 Full
@@ -607,12 +620,6 @@
                 <span class="radio-dot"><span class="radio-dot-inner"></span></span>
                 Name and instruction only
               </label>
-            </div>
-            <div class="preview-box">
-              <div class="preview-label">PREVIEW</div>
-              <div class="preview-content-area">
-                <div id="med-preview"></div>
-              </div>
             </div>
           </div>
         </div>
