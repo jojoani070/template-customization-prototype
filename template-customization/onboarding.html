@@ -1,0 +1,901 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Template Customization – Onboarding</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --bg-primary: #ffffff;
+    --bg-secondary: #fafafa;
+    --bg-tertiary: #f5f5f5;
+    --border-primary: #f0f0f0;
+    --border-input: #dedede;
+    --text-primary: #383838;
+    --text-secondary: #606060;
+    --text-secondary-dark: #4d4d4d;
+    --text-tertiary: #737373;
+    --text-supporting: #979797;
+    --accent: #836bff;
+    --dark: #3c3c3c;
+    --gray-900: #252527;
+    --gray-100: #f5f5f5;
+  }
+
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: rgba(0, 0, 0, 0.4);
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ========== POPUP SHELL ========== */
+  .popup {
+    width: 560px;
+    background: var(--bg-primary);
+    border-radius: 12px;
+    box-shadow:
+      0 20px 25px -5px rgba(0,0,0,0.1),
+      0 10px 10px -5px rgba(0,0,0,0.04);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  /* Top bar */
+  .popup-topbar {
+    padding: 8px 24px;
+    border-bottom: 1px solid var(--border-primary);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-shrink: 0;
+  }
+  .popup-topbar-label {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text-secondary);
+    line-height: 1.48;
+  }
+  .popup-step-indicator {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text-supporting);
+    line-height: 1.48;
+  }
+
+  /* Body — FIXED height, no jumping */
+  .popup-body {
+    padding: 24px 40px 40px;
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+    height: 580px;
+    flex-shrink: 0;
+    overflow: visible;
+    position: relative;
+  }
+
+  /* Steps — absolute positioning for zero-jump transitions */
+  .steps-container {
+    position: relative;
+    flex: 1;
+    min-height: 0;
+  }
+  .step {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s ease;
+  }
+  .step.active {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  /* Section header */
+  .step-header { display: flex; flex-direction: column; gap: 8px; flex-shrink: 0; }
+  .step-heading {
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--text-primary);
+    line-height: 1.32;
+  }
+  .step-desc {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text-tertiary);
+    line-height: 1.48;
+  }
+  .step-desc strong { font-weight: 700; color: var(--text-primary); }
+
+  /* ========== PREVIEW VIEWPORT ========== */
+  .preview-viewport {
+    width: 100%;
+    height: 315px;
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border-primary);
+    border-radius: 10px;
+    overflow: hidden;
+    position: relative;
+    flex-shrink: 0;
+  }
+
+  /* The floating note card inside the viewport */
+  .preview-card {
+    position: absolute;
+    top: 44px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 429px;
+    height: 504px;
+    background: var(--bg-primary);
+    border: 1px solid var(--border-primary);
+    border-radius: 10px;
+    box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25);
+    padding: 32px 24px;
+    overflow-x: hidden;
+    overflow-y: auto;
+  }
+
+  /* Fade at bottom of viewport */
+  .preview-viewport::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: -7px;
+    right: -7px;
+    height: 67px;
+    background: linear-gradient(to bottom, rgba(245,245,245,0), #f5f5f5);
+    pointer-events: none;
+    z-index: 2;
+  }
+
+  /* ========== NOTE STRUCTURE INSIDE PREVIEW ========== */
+  .note-block {
+    background: white;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+    padding-bottom: 32px;
+  }
+  .note-section { display: flex; flex-direction: column; gap: 12px; }
+  .note-section.gap-sm { gap: 6px; }
+  .note-section-label {
+    font-family: 'Inter', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    line-height: 1.48;
+  }
+  .note-section-label.bold { font-weight: 700; }
+
+  /* Content box — bordered container for highlighted content */
+  .content-box {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-primary);
+    border-radius: 6px;
+    padding: 24px;
+  }
+
+  /* RFV preview text */
+  .rfv-text { display: flex; flex-direction: column; gap: 4px; }
+  .rfv-text .rfv-line {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    line-height: 1.48;
+  }
+  .rfv-text .rfv-line.bold {
+    font-weight: 700;
+    color: var(--text-secondary-dark);
+  }
+  .rfv-text .rfv-line.regular {
+    font-weight: 500;
+    color: var(--text-tertiary);
+  }
+
+  /* Skeleton — paragraph bars (no dots) */
+  .skel-para { display: flex; flex-direction: column; gap: 8px; }
+  .skel-bar {
+    height: 8px;
+    border-radius: 2px;
+    background: var(--border-primary);
+  }
+  .skel-bar.w-40 { width: 158px; }
+  .skel-bar.w-full { width: 100%; }
+
+  /* Skeleton — bullet point bars */
+  .skel-bullets { display: flex; flex-direction: column; gap: 8px; }
+  .skel-bullet-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .skel-dot {
+    width: 8px; height: 8px;
+    border-radius: 100px;
+    background: var(--border-primary);
+    flex-shrink: 0;
+  }
+
+  /* Assessment cards */
+  .assess-cards { display: flex; flex-direction: column; gap: 12px; }
+  .assess-card {
+    background: white;
+    border-radius: 8px;
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .icd-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0 4px;
+    background: var(--accent);
+    border-radius: 4px;
+    font-family: 'Inter', sans-serif;
+    font-size: 10px;
+    font-weight: 600;
+    color: white;
+    text-transform: uppercase;
+    letter-spacing: 0.2px;
+    line-height: 1.42;
+    width: fit-content;
+  }
+  .assess-title {
+    font-family: 'Inter', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-primary);
+    line-height: 1.48;
+  }
+  .assess-sub {
+    font-family: 'Inter', sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text-tertiary);
+    line-height: 1.48;
+  }
+
+  /* Diagnosis text */
+  .dx-text {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text-primary);
+    line-height: 1.48;
+  }
+  .dx-text p + p { margin-top: 8px; }
+
+  /* Medication preview */
+  .med-preview {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text-primary);
+    line-height: 1.48;
+  }
+  .med-preview ul { list-style: disc; padding-left: 18px; }
+  .med-preview li + li { margin-top: 2px; }
+  .med-heading-text {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text-primary);
+    line-height: 1.48;
+    margin-bottom: 8px;
+  }
+
+  /* ========== SELECT BUTTON (tall dropdown) ========== */
+  .select-dropdown {
+    position: relative;
+    flex-shrink: 0;
+    z-index: 20;
+  }
+  .select-btn {
+    width: 100%;
+    height: 64px;
+    padding: 10px 16px;
+    background: var(--bg-primary);
+    border: 1px solid var(--border-primary);
+    border-radius: 10px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    transition: border-color 0.12s;
+    flex-shrink: 0;
+  }
+  .select-btn:hover { border-color: var(--border-input); }
+  .select-btn-text { display: flex; flex-direction: column; gap: 2px; }
+  .select-btn-title {
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-primary);
+    letter-spacing: -0.14px;
+    line-height: 1.46;
+  }
+  .select-btn-sub {
+    font-family: 'Inter', sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text-tertiary);
+    line-height: 1.32;
+  }
+  .select-btn-icon {
+    width: 20px; height: 20px; flex-shrink: 0;
+    color: var(--text-tertiary);
+    transition: transform 0.2s;
+  }
+
+  /* Dropdown menu — opens UPWARD to avoid clipping */
+  .select-menu {
+    position: absolute;
+    bottom: calc(100% + 4px);
+    left: 0; right: 0;
+    background: var(--bg-primary);
+    border: 1px solid var(--border-primary);
+    border-radius: 10px;
+    box-shadow: 0 -4px 20px rgba(0,0,0,0.08), 0 4px 20px rgba(0,0,0,0.08);
+    z-index: 30;
+    display: none;
+    padding: 4px;
+  }
+  .select-dropdown.open .select-menu { display: block; }
+  .select-dropdown.open .select-btn { border-color: var(--border-input); }
+  .select-dropdown.open .select-btn-icon { transform: rotate(180deg); }
+  .select-option {
+    padding: 10px 12px;
+    cursor: pointer;
+    border-radius: 6px;
+    transition: background 0.08s;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .select-option:hover { background: var(--bg-tertiary); }
+  .select-option.selected { background: var(--bg-tertiary); }
+  .select-option-title {
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-primary);
+    letter-spacing: -0.14px;
+    line-height: 1.46;
+  }
+  .select-option-sub {
+    font-family: 'Inter', sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text-tertiary);
+    line-height: 1.32;
+  }
+
+  /* ========== RADIO ========== */
+  .radio-group { display: flex; flex-direction: row; gap: 40px; flex-shrink: 0; }
+  .radio-label {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    color: rgba(0,0,0,0.8);
+    letter-spacing: -0.14px;
+    line-height: 1.48;
+    user-select: none;
+  }
+  .radio-dot {
+    width: 16px; height: 16px;
+    border-radius: 50%;
+    border: 1px solid var(--border-input);
+    background: var(--bg-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: all 0.12s;
+  }
+  .radio-label.selected .radio-dot { background: var(--dark); border-color: var(--dark); }
+  .radio-dot-inner {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: white; opacity: 0; transition: opacity 0.12s;
+  }
+  .radio-label.selected .radio-dot-inner { opacity: 1; }
+
+  /* ========== FOOTER ========== */
+  .popup-footer {
+    padding: 12px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    box-shadow: 0 1px 3px 0 rgba(0,0,0,0.1), 0 1px 2px 0 rgba(0,0,0,0.06);
+    flex-shrink: 0;
+    background: var(--bg-primary);
+    position: relative;
+    z-index: 1;
+  }
+  .popup-footer-inner {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    position: relative;
+  }
+  .progress-dots {
+    display: flex;
+    gap: 6px;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+  .progress-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--border-primary);
+    transition: background 0.2s;
+  }
+  .progress-dot.active { background: var(--dark); }
+  .progress-dot.done { background: var(--text-supporting); }
+  .footer-buttons {
+    display: flex;
+    gap: 12px;
+    margin-left: auto;
+  }
+  .btn {
+    height: 40px;
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: -0.14px;
+    line-height: 1.48;
+    cursor: pointer;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: opacity 0.12s;
+  }
+  .btn:hover { opacity: 0.85; }
+  .btn-ghost {
+    background: transparent;
+    color: var(--dark);
+    min-width: 68px;
+  }
+  .btn-primary {
+    background: var(--gray-900);
+    color: var(--gray-100);
+    min-width: 148px;
+  }
+  .btn:disabled { opacity: 0.35; cursor: default; }
+  .btn:disabled:hover { opacity: 0.35; }
+
+  /* Back to home link */
+  .back-home {
+    position: fixed;
+    top: 16px;
+    right: 16px;
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    background: #252527;
+    color: #f5f5f5;
+    border-radius: 8px;
+    font-family: 'Inter', sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+    text-decoration: none;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    transition: opacity 0.12s;
+  }
+  .back-home:hover { opacity: 0.85; }
+  .back-home svg { width: 14px; height: 14px; }
+  .in-iframe .back-home { display: none; }
+</style>
+<script>if (window !== window.top) document.documentElement.classList.add('in-iframe');</script>
+</head>
+<body>
+
+<a class="back-home" href="../index.html">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+  All Explorations
+</a>
+
+<div class="popup">
+  <!-- Top Bar -->
+  <div class="popup-topbar">
+    <span class="popup-topbar-label">Template Customization</span>
+    <span class="popup-step-indicator" id="step-indicator">1 of 4</span>
+  </div>
+
+  <!-- Body -->
+  <div class="popup-body">
+    <div class="steps-container">
+
+      <!-- ============ STEP 1: Chief Complaints ============ -->
+      <div class="step active" id="step-1">
+        <div class="step-header">
+          <h2 class="step-heading">Chief Complaints</h2>
+          <p class="step-desc">Choose how the <strong>"reason for visit"</strong> appears at the top of every note.</p>
+        </div>
+
+        <div class="preview-viewport">
+          <div class="preview-card">
+            <div class="note-block">
+              <!-- RFV — highlighted -->
+              <div class="note-section">
+                <div class="note-section-label">Reason for visit</div>
+                <div class="content-box">
+                  <div class="rfv-text" id="rfv-preview">
+                    <div class="rfv-line bold">Consult: Fever</div>
+                    <div class="rfv-line regular">Follow-up post discharge</div>
+                    <div class="rfv-line regular">For immunization</div>
+                  </div>
+                </div>
+              </div>
+              <!-- Assessment — skeleton paragraph -->
+              <div class="note-section gap-sm">
+                <div class="note-section-label">Assessment</div>
+                <div class="skel-para">
+                  <div class="skel-bar w-40"></div>
+                  <div class="skel-bar w-full"></div>
+                  <div class="skel-bar w-full"></div>
+                  <div class="skel-bar w-full"></div>
+                  <div class="skel-bar w-full"></div>
+                  <div class="skel-bar w-full"></div>
+                </div>
+              </div>
+              <!-- Plan — skeleton bullets -->
+              <div class="note-section gap-sm">
+                <div class="note-section-label bold">Plan</div>
+                <div class="skel-bullets">
+                  <div class="skel-bullet-row"><div class="skel-dot"></div><div class="skel-bar w-40"></div></div>
+                  <div class="skel-bullet-row"><div class="skel-dot"></div><div class="skel-bar w-full"></div></div>
+                  <div class="skel-bullet-row"><div class="skel-dot"></div><div class="skel-bar w-full"></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="select-dropdown" id="dd-cc">
+          <div class="select-btn" onclick="toggleDD('dd-cc')">
+            <div class="select-btn-text">
+              <div class="select-btn-title" id="cc-title">Short Label</div>
+              <div class="select-btn-sub" id="cc-sub">Short label for reason for visit</div>
+            </div>
+            <svg class="select-btn-icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 7.5l5 5 5-5"/></svg>
+          </div>
+          <div class="select-menu">
+            <div class="select-option selected" onclick="pickCC(0)" onmouseenter="previewCC(0)">
+              <div class="select-option-title">Short Label</div>
+              <div class="select-option-sub">Short label for reason for visit</div>
+            </div>
+            <div class="select-option" onclick="pickCC(1)" onmouseenter="previewCC(1)">
+              <div class="select-option-title">Brief with context</div>
+              <div class="select-option-sub">Label plus brief clinical context</div>
+            </div>
+            <div class="select-option" onclick="pickCC(2)" onmouseenter="previewCC(2)">
+              <div class="select-option-title">Narrative</div>
+              <div class="select-option-sub">Full sentence describing the visit</div>
+            </div>
+            <div class="select-option" onclick="pickCC(3)" onmouseenter="previewCC(3)">
+              <div class="select-option-title">Patient-reported</div>
+              <div class="select-option-sub">In the patient's own words</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ============ STEP 2: Assessment ============ -->
+      <div class="step" id="step-2">
+        <div class="step-header">
+          <h2 class="step-heading">Assessment</h2>
+          <p class="step-desc">Display ICD-10 codes alongside each diagnosis in the Assessment.</p>
+        </div>
+
+        <div class="preview-viewport">
+          <div class="preview-card">
+            <div class="note-block">
+              <!-- Assessment — highlighted with cards -->
+              <div class="note-section gap-sm">
+                <div class="note-section-label">Assessment</div>
+                <div class="content-box">
+                  <div class="assess-cards" id="assess-preview">
+                  </div>
+                </div>
+              </div>
+              <!-- Plan — skeleton bullets -->
+              <div class="note-section gap-sm">
+                <div class="note-section-label bold">Plan</div>
+                <div class="skel-bullets">
+                  <div class="skel-bullet-row"><div class="skel-dot"></div><div class="skel-bar w-40"></div></div>
+                  <div class="skel-bullet-row"><div class="skel-dot"></div><div class="skel-bar w-full"></div></div>
+                  <div class="skel-bullet-row"><div class="skel-dot"></div><div class="skel-bar w-full"></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="radio-group" id="rg-assess">
+          <label class="radio-label selected" onclick="pickAssess(true)">
+            <span class="radio-dot"><span class="radio-dot-inner"></span></span>
+            Yes
+          </label>
+          <label class="radio-label" onclick="pickAssess(false)">
+            <span class="radio-dot"><span class="radio-dot-inner"></span></span>
+            No
+          </label>
+        </div>
+      </div>
+
+      <!-- ============ STEP 3: Diagnosis style ============ -->
+      <div class="step" id="step-3">
+        <div class="step-header">
+          <h2 class="step-heading">Diagnosis style</h2>
+          <p class="step-desc">Set the format for how diagnoses are written in the note.</p>
+        </div>
+
+        <div class="preview-viewport">
+          <div class="preview-card">
+            <div class="note-block">
+              <!-- Diagnosis — highlighted with text -->
+              <div class="note-section">
+                <div class="note-section-label">Diagnosis</div>
+                <div class="content-box">
+                  <div class="dx-text" id="ds-preview"></div>
+                </div>
+              </div>
+              <!-- Plan — skeleton bullets -->
+              <div class="note-section gap-sm">
+                <div class="note-section-label bold">Plan</div>
+                <div class="skel-bullets">
+                  <div class="skel-bullet-row"><div class="skel-dot"></div><div class="skel-bar w-40"></div></div>
+                  <div class="skel-bullet-row"><div class="skel-dot"></div><div class="skel-bar w-full"></div></div>
+                  <div class="skel-bullet-row"><div class="skel-dot"></div><div class="skel-bar w-full"></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="select-dropdown" id="dd-ds">
+          <div class="select-btn" onclick="toggleDD('dd-ds')">
+            <div class="select-btn-text">
+              <div class="select-btn-title" id="ds-title">Full terminology</div>
+              <div class="select-btn-sub" id="ds-sub">Complete medical terminology</div>
+            </div>
+            <svg class="select-btn-icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 7.5l5 5 5-5"/></svg>
+          </div>
+          <div class="select-menu">
+            <div class="select-option selected" onclick="pickDS(0)" onmouseenter="previewDS(0)">
+              <div class="select-option-title">Full terminology</div>
+              <div class="select-option-sub">Complete medical terminology</div>
+            </div>
+            <div class="select-option" onclick="pickDS(1)" onmouseenter="previewDS(1)">
+              <div class="select-option-title">Abbreviated</div>
+              <div class="select-option-sub">Standard medical abbreviations</div>
+            </div>
+            <div class="select-option" onclick="pickDS(2)" onmouseenter="previewDS(2)">
+              <div class="select-option-title">Concise</div>
+              <div class="select-option-sub">Short, simplified phrasing</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ============ STEP 4: Medication detail ============ -->
+      <div class="step" id="step-4">
+        <div class="step-header">
+          <h2 class="step-heading">Medication detail</h2>
+          <p class="step-desc">Control how medications appear in the plan section of the note.</p>
+        </div>
+
+        <div class="preview-viewport">
+          <div class="preview-card">
+            <div class="note-block">
+              <!-- Plan — highlighted with meds -->
+              <div class="note-section gap-sm">
+                <div class="note-section-label bold">Plan</div>
+                <div class="content-box">
+                  <div class="med-preview" id="med-preview"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="radio-group" id="rg-med">
+          <label class="radio-label selected" onclick="pickMed(true)">
+            <span class="radio-dot"><span class="radio-dot-inner"></span></span>
+            Full
+          </label>
+          <label class="radio-label" onclick="pickMed(false)">
+            <span class="radio-dot"><span class="radio-dot-inner"></span></span>
+            Name and instruction only
+          </label>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div class="popup-footer">
+    <div class="popup-footer-inner">
+      <div class="progress-dots">
+        <div class="progress-dot active" id="dot-0"></div>
+        <div class="progress-dot" id="dot-1"></div>
+        <div class="progress-dot" id="dot-2"></div>
+        <div class="progress-dot" id="dot-3"></div>
+      </div>
+      <div class="footer-buttons">
+        <button class="btn btn-ghost" id="btn-back" onclick="goBack()" disabled>Back</button>
+        <button class="btn btn-primary" id="btn-next" onclick="goNext()">Next</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ====== DATA ====== */
+var ccData = [
+  { title: 'Short Label', sub: 'Short label for reason for visit' },
+  { title: 'Brief with context', sub: 'Label plus brief clinical context' },
+  { title: 'Narrative', sub: 'Full sentence describing the visit' },
+  { title: 'Patient-reported', sub: 'In the patient\'s own words' }
+];
+var ccPreviews = [
+  '<div class="rfv-line bold">Consult: Fever</div><div class="rfv-line regular">Follow-up post discharge</div><div class="rfv-line regular">For immunization</div>',
+  '<div class="rfv-line bold">Consult: Fever</div><div class="rfv-line regular">Fever for 3 days, highest temp 40\u00B0C, associated with sore throat and fatigue</div>',
+  '<div class="rfv-line regular">Patient presents with a 3-day history of fever up to 40\u00B0C, associated with sore throat and fatigue, no improvement with paracetamol.</div>',
+  '<div class="rfv-line regular">\u201CI\u2019ve had a fever since Monday, my throat hurts, and the paracetamol isn\u2019t helping anymore.\u201D</div>'
+];
+
+var dsData = [
+  { title: 'Full terminology', sub: 'Complete medical terminology' },
+  { title: 'Abbreviated', sub: 'Standard medical abbreviations' },
+  { title: 'Concise', sub: 'Short, simplified phrasing' }
+];
+var dsPreviews = [
+  '<p>Upper respiratory tract infection with allergic component</p><p>Chronic kidney disease stage 3 with secondary hypertension</p>',
+  '<p>CKD G3B;A1 c/ sec. HTN</p><p>URTI c/ allergic comp.</p>',
+  '<p>CKD Stage 3 + Hypertension</p><p>Acute nasopharyngitis + Allergic rhinitis</p>'
+];
+
+function assessHTML(showCodes) {
+  var tag = function(code) { return showCodes ? '<div><span class="icd-badge">' + code + '</span></div>' : ''; };
+  var desc = function(text) { return showCodes ? '<div class="assess-sub">' + text + '</div>' : ''; };
+  return '<div class="assess-card">' +
+    tag('N18.3') +
+    '<div class="assess-title">Chronic Kidney Disease, Stage 3</div>' +
+    desc('Moderate CKD with stable creatinine, eGFR 42 mL/min') +
+  '</div>' +
+  '<div class="assess-card">' +
+    tag('E79.0') +
+    '<div class="assess-title">Hyperuricemia</div>' +
+    desc('Elevated uric acid, no signs of inflammatory arthritis') +
+  '</div>';
+}
+
+function medHTML(full) {
+  var items = full
+    ? ['Amoxicillin 500 mg 3\u00D7/day for 7 days','Omeprazole 1\u00D720 mg before breakfast','Continue Vitamin D 1\u00D71000 IU daily','Discontinue Fluimucil']
+    : ['Amoxicillin for infection','Omeprazole before breakfast','Continue Vitamin D','Discontinue Fluimucil'];
+  return '<div class="med-heading-text">Medications</div><ul>' + items.map(function(i){return '<li>'+i+'</li>';}).join('') + '</ul>';
+}
+
+/* ====== STATE ====== */
+var currentStep = 1;
+var totalSteps = 4;
+var ccCommitted = 0;
+var dsCommitted = 0;
+
+/* ====== NAVIGATION ====== */
+function showStep(n) {
+  document.querySelectorAll('.step').forEach(function(s) { s.classList.remove('active'); });
+  document.getElementById('step-' + n).classList.add('active');
+  document.getElementById('step-indicator').textContent = n + ' of ' + totalSteps;
+  document.getElementById('btn-back').disabled = (n === 1);
+  document.getElementById('btn-next').textContent = (n === totalSteps) ? 'Finish' : 'Next';
+  for (var i = 0; i < totalSteps; i++) {
+    var dot = document.getElementById('dot-' + i);
+    dot.className = 'progress-dot';
+    if (i + 1 === n) dot.classList.add('active');
+    else if (i + 1 < n) dot.classList.add('done');
+  }
+}
+function goNext() {
+  closeAllDD();
+  if (currentStep < totalSteps) { currentStep++; showStep(currentStep); }
+  else { alert('Preferences saved!'); }
+}
+function goBack() {
+  closeAllDD();
+  if (currentStep > 1) { currentStep--; showStep(currentStep); }
+}
+
+/* ====== DROPDOWNS ====== */
+function toggleDD(id) {
+  var el = document.getElementById(id);
+  var wasOpen = el.classList.contains('open');
+  closeAllDD();
+  if (!wasOpen) el.classList.add('open');
+}
+function closeAllDD() {
+  document.querySelectorAll('.select-dropdown.open').forEach(function(d) {
+    d.classList.remove('open');
+  });
+  document.getElementById('rfv-preview').innerHTML = ccPreviews[ccCommitted];
+  document.getElementById('ds-preview').innerHTML = dsPreviews[dsCommitted];
+}
+document.addEventListener('click', function(e) {
+  if (!e.target.closest('.select-dropdown')) closeAllDD();
+});
+
+/* ====== HOVER PREVIEWS ====== */
+function previewCC(idx) { document.getElementById('rfv-preview').innerHTML = ccPreviews[idx]; }
+function previewDS(idx) { document.getElementById('ds-preview').innerHTML = dsPreviews[idx]; }
+
+/* ====== SELECTIONS ====== */
+function pickCC(idx) {
+  ccCommitted = idx;
+  document.getElementById('cc-title').textContent = ccData[idx].title;
+  document.getElementById('cc-sub').textContent = ccData[idx].sub;
+  document.getElementById('rfv-preview').innerHTML = ccPreviews[idx];
+  markSel('#dd-cc', idx);
+  closeAllDD();
+}
+function pickAssess(val) {
+  setRadio('#rg-assess', val ? 0 : 1);
+  document.getElementById('assess-preview').innerHTML = assessHTML(val);
+}
+function pickDS(idx) {
+  dsCommitted = idx;
+  document.getElementById('ds-title').textContent = dsData[idx].title;
+  document.getElementById('ds-sub').textContent = dsData[idx].sub;
+  document.getElementById('ds-preview').innerHTML = dsPreviews[idx];
+  markSel('#dd-ds', idx);
+  closeAllDD();
+}
+function pickMed(full) {
+  setRadio('#rg-med', full ? 0 : 1);
+  document.getElementById('med-preview').innerHTML = medHTML(full);
+}
+function markSel(sel, idx) {
+  document.querySelectorAll(sel + ' .select-option').forEach(function(o, i) {
+    o.classList.toggle('selected', i === idx);
+  });
+}
+function setRadio(sel, idx) {
+  document.querySelectorAll(sel + ' .radio-label').forEach(function(l, i) {
+    l.classList.toggle('selected', i === idx);
+  });
+}
+
+/* ====== INIT ====== */
+document.getElementById('assess-preview').innerHTML = assessHTML(true);
+document.getElementById('ds-preview').innerHTML = dsPreviews[0];
+document.getElementById('med-preview').innerHTML = medHTML(true);
+</script>
+</body>
+</html>

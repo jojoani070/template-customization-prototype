@@ -3,734 +3,79 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Template Customization – eluve.</title>
+<title>Design Explorations</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
   *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
-  :root {
-    --bg-primary: #ffffff;
-    --bg-secondary: #fafafa;
-    --bg-tertiary: #f5f5f5;
-    --border-primary: #f0f0f0;
-    --border-input: #dedede;
-    --text-primary: #383838;
-    --text-secondary: #606060;
-    --text-tertiary: #737373;
-    --text-supporting: #979797;
-    --accent: #836bff;
-    --dark: #3c3c3c;
-  }
-
   body {
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-    background: var(--bg-secondary);
-    color: var(--text-primary);
-    height: 100vh;
-    display: flex;
-    overflow: hidden;
+    background: #f5f5f5;
+    color: #383838;
+    min-height: 100vh;
+    padding: 48px 24px;
     -webkit-font-smoothing: antialiased;
   }
 
-  /* ========== SIDEBAR ========== */
-  .sidebar {
-    width: 220px;
-    background: var(--bg-secondary);
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    flex-shrink: 0;
-    height: 100vh;
+  .page { max-width: 1120px; margin: 0 auto; }
+
+  .page-header { margin-bottom: 40px; }
+  .page-header h1 {
+    font-size: 24px; font-weight: 600;
+    letter-spacing: -0.3px; margin-bottom: 6px;
   }
-  .sidebar-top { display: flex; flex-direction: column; gap: 24px; }
-  .sidebar-logo-area { padding: 16px 8px 8px; }
-  .sidebar-logo-inner {
-    padding: 10px 12px;
-    padding-top: 14px;
-    display: flex;
-    align-items: center;
+  .page-header p {
+    font-size: 14px; color: #737373; line-height: 1.5;
   }
-  .sidebar-logo-inner svg {
-    height: 19px;
-    width: 63px;
+
+  .card-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+  }
+  @media (max-width: 960px) {
+    .card-grid { grid-template-columns: 1fr; max-width: 480px; }
+  }
+
+  .card {
+    display: block;
+    border-radius: 12px;
+    overflow: hidden;
+    text-decoration: none;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  .card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 16px 40px rgba(0,0,0,0.10);
+  }
+  .card img {
+    width: 100%;
     display: block;
   }
-  .sidebar-session-area { padding: 0 16px; }
-  .session-btn {
-    width: 100%;
-    height: 36px;
-    background: var(--bg-primary);
-    border: 1px solid var(--border-primary);
-    border-radius: 8px;
-    font-family: 'Inter', sans-serif;
-    font-size: 14px;
-    font-weight: 500;
-    color: var(--text-primary);
-    cursor: pointer;
-    transition: background 0.12s;
-  }
-  .session-btn:hover { background: var(--bg-tertiary); }
-
-  .sidebar-nav { padding: 8px; display: flex; flex-direction: column; gap: 4px; }
-  .nav-item {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 12px 8px;
-    border-radius: 6px;
-    font-size: 14px;
-    font-weight: 400;
-    color: var(--text-tertiary);
-    cursor: pointer;
-    text-decoration: none;
-    transition: background 0.1s;
-    line-height: 1;
-  }
-  .nav-item:hover { background: var(--bg-tertiary); }
-  .nav-item.active { background: var(--bg-tertiary); color: var(--text-primary); font-weight: 500; }
-  .nav-icon { width: 16px; height: 16px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
-  .nav-icon svg { width: 16px; height: 16px; stroke-width: 1.8; }
-
-  .sidebar-bottom { display: flex; flex-direction: column; }
-  .sidebar-links { padding: 8px; }
-  .sidebar-links-label {
-    padding: 8px;
-    font-size: 12px;
-    font-weight: 500;
-    color: var(--text-tertiary);
-    opacity: 0.7;
-    line-height: 32px;
-    letter-spacing: -0.36px;
-  }
-  .sidebar-link {
-    display: flex;
-    align-items: center;
-    height: 32px;
-    padding: 0 8px;
-    font-size: 14px;
-    color: var(--text-tertiary);
-    text-decoration: none;
-    border-radius: 6px;
-    cursor: pointer;
-    line-height: 1;
-  }
-  .sidebar-link:hover { background: var(--bg-tertiary); }
-
-  .sidebar-user-area { padding: 8px; }
-  .sidebar-user {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 8px;
-    border-radius: 6px;
-    cursor: pointer;
-  }
-  .sidebar-user:hover { background: var(--bg-tertiary); }
-  .user-avatar {
-    width: 32px; height: 32px;
-    border-radius: 8px;
-    background: linear-gradient(135deg, #c084fc, #818cf8, #60a5fa);
-    flex-shrink: 0;
-  }
-  .user-info { flex: 1; min-width: 0; line-height: 1; }
-  .user-name {
-    font-size: 14px; font-weight: 600; color: var(--text-tertiary);
-    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-  }
-  .user-email {
-    font-size: 12px; color: var(--text-tertiary); margin-top: 2px;
-    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-  }
-  .user-selector {
-    width: 16px; height: 16px; flex-shrink: 0; color: var(--text-tertiary);
-    display: flex; align-items: center; justify-content: center;
-  }
-
-  /* ========== MAIN ========== */
-  .main { flex: 1; padding: 16px; overflow: hidden; min-width: 0; }
-  .main-inner {
-    background: var(--bg-primary);
-    border: 1px solid var(--border-primary);
-    border-radius: 20px;
-    height: 100%;
-    display: flex;
-    overflow: hidden;
-  }
-
-  /* Settings left nav — shadcn sidebar pattern */
-  .settings-nav {
-    width: 240px;
-    border-right: 1px solid var(--border-primary);
-    flex-shrink: 0;
-    overflow-y: auto;
-    display: flex;
-    flex-direction: column;
-  }
-  .settings-nav-header {
-    padding: 20px 24px 16px;
-    font-size: 16px;
-    font-weight: 600;
-    color: var(--text-primary);
-    line-height: 1.4;
-    letter-spacing: -0.2px;
-    border-bottom: 1px solid var(--border-primary);
-  }
-  .settings-nav-content {
-    padding: 16px 12px;
-    display: flex;
-    flex-direction: column;
-    gap: 24px;
-    flex: 1;
-  }
-  .sg-group {}
-  .sg-label {
-    padding: 4px 8px;
-    font-size: 11px;
-    font-weight: 600;
-    color: var(--text-supporting);
-    line-height: 1.48;
-    text-transform: uppercase;
-    letter-spacing: 0.4px;
-    margin-bottom: 2px;
-  }
-  .sg-item {
-    display: flex;
-    align-items: center;
-    padding: 6px 8px;
-    font-size: 13px;
-    font-weight: 500;
-    color: var(--text-secondary);
-    border-radius: 6px;
-    cursor: pointer;
-    text-decoration: none;
-    letter-spacing: -0.1px;
-    line-height: 1.48;
-    transition: all 0.1s;
-  }
-  .sg-item:hover { background: var(--bg-tertiary); color: var(--text-primary); }
-  .sg-item.active {
-    background: var(--bg-tertiary);
-    color: var(--text-primary);
-    font-weight: 600;
-  }
-
-  /* Settings content — centered */
-  .settings-content {
-    flex: 1;
-    padding: 40px 48px;
-    overflow-y: auto;
-  }
-  .settings-inner {
-    width: 600px;
-    margin: 0 auto;
-    display: flex;
-    flex-direction: column;
-    gap: 48px;
-  }
-  .page-title {
-    font-size: 32px;
-    font-weight: 600;
-    color: #4a4a4a;
-    line-height: 1.32;
-  }
-
-  /* Config sections */
-  .config-section {
-    padding-top: 48px;
-    border-top: 1px solid var(--border-primary);
-  }
-  .config-section:first-of-type {
-    padding-top: 0;
-    border-top: none;
-  }
-  .section-heading {
-    font-size: 20px;
-    font-weight: 600;
-    color: var(--text-primary);
-    line-height: 1.32;
-  }
-  .section-desc {
-    font-size: 12px;
-    font-weight: 500;
-    color: var(--text-tertiary);
-    line-height: 1.48;
-    margin-top: 8px;
-  }
-  .section-desc strong { font-weight: 700; color: var(--text-primary); }
-  .section-controls { margin-top: 24px; }
-
-  /* ========== DROPDOWN ========== */
-  .dropdown-trigger {
-    width: 100%;
-    height: 40px;
-    padding: 0 12px;
-    background: var(--bg-primary);
-    border: 1px solid var(--border-primary);
-    border-radius: 8px;
-    font-family: 'Inter', sans-serif;
-    font-size: 12px;
-    font-weight: 500;
-    color: var(--text-primary);
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    line-height: 1.48;
-    transition: border-color 0.12s;
-  }
-  .dropdown-trigger:hover { border-color: var(--border-input); }
-  .dropdown-chevron {
-    width: 16px; height: 16px; flex-shrink: 0; color: var(--text-tertiary);
-    transition: transform 0.2s;
-  }
-  .dropdown.open .dropdown-chevron { transform: rotate(180deg); }
-  /* Dropdown menu — standard overlay below trigger */
-  .dropdown-menu {
-    position: absolute;
-    top: calc(100% + 4px);
-    left: 0; right: 0;
-    background: var(--bg-primary);
-    border: 1px solid var(--border-primary);
-    border-radius: 8px;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
-    z-index: 10;
-    display: none;
-    overflow: hidden;
-    padding: 4px;
-  }
-  .dropdown.open .dropdown-menu { display: block; }
-  .dropdown-option {
-    padding: 8px 10px;
-    font-size: 12px;
-    font-weight: 500;
-    color: var(--text-secondary);
-    cursor: pointer;
-    border-radius: 4px;
-    transition: background 0.08s;
-    line-height: 1.48;
-  }
-  .dropdown-option:hover { background: var(--bg-tertiary); }
-  .dropdown-option.selected { background: var(--bg-tertiary); color: var(--text-primary); }
-
-  /* ========== RADIO ========== */
-  .radio-group { display: flex; flex-direction: row; gap: 32px; }
-  .radio-label {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    cursor: pointer;
-    font-size: 14px;
-    font-weight: 500;
-    color: rgba(0,0,0,0.8);
-    letter-spacing: -0.14px;
-    line-height: 1.48;
-    user-select: none;
-  }
-  .radio-dot {
-    width: 16px; height: 16px;
-    border-radius: 50%;
-    border: 1px solid var(--border-input);
-    background: var(--bg-primary);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-    transition: all 0.12s;
-  }
-  .radio-label.selected .radio-dot { background: var(--dark); border-color: var(--dark); }
-  .radio-dot-inner {
-    width: 6px; height: 6px; border-radius: 50%;
-    background: white; opacity: 0; transition: opacity 0.12s;
-  }
-  .radio-label.selected .radio-dot-inner { opacity: 1; }
-
-  /* ========== PREVIEW ========== */
-  .preview-box {
-    background: var(--bg-secondary);
-    border: 1px solid var(--border-primary);
-    border-radius: 6px;
-    padding: 24px;
-    min-height: 138px;
-    display: flex;
-    flex-direction: column;
-  }
-  /* Text-only previews get fixed height; card previews grow to fit */
-  .preview-box.fixed { height: 138px; }
-  .preview-label {
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 8px;
-    font-weight: 500;
-    color: var(--text-secondary);
-    letter-spacing: 0.5px;
-    margin-bottom: 16px;
-    flex-shrink: 0;
-  }
-  .preview-content-area {
-    flex: 1;
-    display: flex;
-    align-items: center;
-  }
-  .preview-content-area > * { width: 100%; }
-  .preview-text {
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 12px;
-    font-weight: 500;
-    color: var(--text-primary);
-    line-height: 1.48;
-  }
-  .preview-text p + p { margin-top: 4px; }
-
-  /* Assessment cards */
-  .assess-cards { display: flex; flex-direction: column; gap: 12px; }
-  .assess-card {
-    background: white;
-    border-radius: 8px;
-    padding: 12px;
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-  }
-  .icd-badge {
-    display: inline-flex;
-    align-items: center;
-    padding: 0 4px;
-    background: var(--accent);
-    border-radius: 4px;
-    font-family: 'Inter', sans-serif;
-    font-size: 10px;
-    font-weight: 600;
-    color: white;
-    text-transform: uppercase;
-    letter-spacing: 0.2px;
-    line-height: 1.42;
-    width: fit-content;
-  }
-  .assess-title {
-    font-family: 'Inter', sans-serif;
-    font-size: 12px;
-    font-weight: 600;
-    color: var(--text-primary);
-    line-height: 1.48;
-  }
-  .assess-sub {
-    font-family: 'Inter', sans-serif;
-    font-size: 12px;
-    font-weight: 500;
-    color: var(--text-tertiary);
-    line-height: 1.48;
-  }
-
-  /* Medication preview */
-  .med-heading {
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 12px; font-weight: 500;
-    color: var(--text-primary); line-height: 1.48;
-    margin-bottom: 12px;
-  }
-  .med-list {
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 12px; font-weight: 500;
-    color: var(--text-primary); line-height: 1.48;
-    list-style: disc; padding-left: 18px;
-  }
-  .med-list li + li { margin-top: 2px; }
 </style>
 </head>
 <body>
 
-<!-- SIDEBAR -->
-<aside class="sidebar">
-  <div class="sidebar-top">
-    <div class="sidebar-logo-area">
-      <div class="sidebar-logo-inner">
-        <svg width="63" height="19" viewBox="0 0 63 19" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M60.9618 18.7167C59.8564 18.7167 58.8984 17.7833 58.8984 16.6779C58.8984 15.5726 59.8564 14.6392 60.9618 14.6392C62.0917 14.6392 63.0005 15.5726 63.0005 16.6779C63.0005 17.7833 62.0917 18.7167 60.9618 18.7167Z" fill="#4D4D4D"/><path d="M51.8059 18.6924C48.2688 18.6924 45.9844 15.8676 45.9844 12.3796C45.9844 8.64593 49.153 5.8457 52.1989 5.8457C55.3921 5.8457 56.915 7.81078 57.3081 11.1514H49.4478C49.5461 14.3446 51.7076 15.9904 53.9674 15.9904C55.2939 15.9904 56.2764 15.4254 57.087 14.9342L57.48 15.4009C56.2518 17.0712 54.4587 18.6924 51.8059 18.6924ZM51.3883 6.87737C50.4058 6.87737 49.5952 7.90903 49.4724 10.2426H53.3534C53.206 8.27748 52.5182 6.87737 51.3883 6.87737Z" fill="#4D4D4D"/><path d="M40.5481 18.717H39.0252L34.4318 7.36869L33.2773 7.04936V6.23877H40.3024V7.04936L38.7058 7.34412L41.0148 14.0499L41.1867 14.6395H41.2113L41.4078 14.0254L43.815 7.41781L42.2675 7.0248V6.23877H46.3941V7.04936L45.1169 7.36869L40.5481 18.717Z" fill="#4D4D4D"/><path d="M24.108 18.7414C22.2412 18.7414 20.5218 17.808 20.5218 14.9832V8.25281L19.0234 7.51591V6.97551L24.5011 6.01754V14.1726C24.5011 15.5727 24.9923 16.457 26.4661 16.457C27.203 16.457 27.768 16.1868 28.1855 15.892V8.15455L26.6135 7.44221V6.90182L32.1648 5.94385V16.8009L33.7369 17.1939V17.8817L28.5294 18.6677L28.2347 16.6781C27.3504 17.5869 25.9257 18.7414 24.108 18.7414Z" fill="#4D4D4D"/><path d="M11.7441 18.3734V17.5383L13.2671 17.1698V2.99673L11.8178 2.08789V1.62118L17.2463 0V17.1698L18.7938 17.5383V18.3734H11.7441Z" fill="#4D4D4D"/><path d="M5.8215 18.6924C2.28439 18.6924 0 15.8676 0 12.3796C0 8.64593 3.16867 5.8457 6.21451 5.8457C9.40774 5.8457 10.9307 7.81078 11.3237 11.1514H3.46342C3.56168 14.3446 5.72325 15.9904 7.98307 15.9904C9.30949 15.9904 10.292 15.4254 11.1026 14.9342L11.4956 15.4009C10.2675 17.0712 8.47434 18.6924 5.8215 18.6924ZM5.40392 6.87737C4.42139 6.87737 3.6108 7.90903 3.48799 10.2426H7.36899C7.22161 8.27748 6.53384 6.87737 5.40392 6.87737Z" fill="#4D4D4D"/></svg>
-      </div>
-    </div>
-    <div class="sidebar-session-area">
-      <button class="session-btn">Start New Session</button>
-    </div>
-    <nav class="sidebar-nav">
-      <a class="nav-item active" href="#">
-        <span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 16 12 14 15 10 15 8 12 2 12"/><path d="M5.45 5.11L2 12v6a2 2 0 002 2h16a2 2 0 002-2v-6l-3.45-6.89A2 2 0 0016.76 4H7.24a2 2 0 00-1.79 1.11z"/></svg></span>
-        Overview
-      </a>
-      <a class="nav-item" href="#">
-        <span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></span>
-        Notes
-      </a>
-      <a class="nav-item" href="#">
-        <span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span>
-        Patient List
-      </a>
-    </nav>
+<div class="page">
+  <div class="page-header">
+    <h1>Design Explorations</h1>
+    <p>Prototypes and design explorations for Template Customization.</p>
   </div>
 
-  <div class="sidebar-bottom">
-    <div class="sidebar-links">
-      <div class="sidebar-links-label">API Reference</div>
-      <a class="sidebar-link" href="#">Templates</a>
-      <a class="sidebar-link" href="#">Settings</a>
-      <a class="sidebar-link" href="#">Help</a>
-    </div>
-    <div class="sidebar-user-area">
-      <div class="sidebar-user">
-        <div class="user-avatar"></div>
-        <div class="user-info">
-          <div class="user-name">Teaching Hospital</div>
-          <div class="user-email">johndoe@gmail.com</div>
-        </div>
-        <div class="user-selector">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 4 18 9"/><polyline points="6 15 12 20 18 15"/></svg>
-        </div>
-      </div>
-    </div>
+  <div class="card-grid">
+    <a class="card" href="template-customization/index.html">
+      <img src="assets/Frame 1430106135.png" alt="Settings Page" />
+    </a>
+    <a class="card" href="template-customization/contextual.html">
+      <img src="assets/Frame 1430106136.png" alt="Contextual" />
+    </a>
+    <a class="card" href="template-customization/onboarding-v2.html">
+      <img src="assets/Frame 1421176816.png" alt="Onboarding" />
+    </a>
   </div>
-</aside>
+</div>
 
-<!-- MAIN -->
-<main class="main">
-  <div class="main-inner">
-
-    <!-- Settings Nav -->
-    <div class="settings-nav">
-      <div class="settings-nav-header">Settings</div>
-      <div class="settings-nav-content">
-        <div class="sg-group">
-          <div class="sg-label">Account</div>
-          <a class="sg-item" href="#">Profile</a>
-          <a class="sg-item" href="#">Preferences</a>
-        </div>
-        <div class="sg-group">
-          <div class="sg-label">Workspace</div>
-          <a class="sg-item" href="#">General</a>
-          <a class="sg-item" href="#">Members</a>
-          <a class="sg-item" href="#">Billing Codes</a>
-        </div>
-        <div class="sg-group">
-          <div class="sg-label">Notes</div>
-          <a class="sg-item" href="#">Preferences</a>
-          <a class="sg-item" href="#">Templates</a>
-          <a class="sg-item active" href="#">Customization</a>
-          <a class="sg-item" href="#">Custom Instructions</a>
-        </div>
-      </div>
-    </div>
-
-    <!-- Content — centered 600px column -->
-    <div class="settings-content">
-      <div class="settings-inner">
-        <h1 class="page-title">Customization</h1>
-
-        <!-- Chief Complaints -->
-        <div class="config-section">
-          <h2 class="section-heading">Chief Complaints</h2>
-          <p class="section-desc">Choose how the <strong>"reason for visit"</strong> appears at the top of every note.</p>
-          <div class="section-controls">
-            <div class="preview-box fixed">
-              <div class="preview-label">PREVIEW</div>
-              <div class="preview-content-area">
-                <div class="preview-text" id="cc-preview">
-                  <p>Consult: Fever</p>
-                  <p>Follow-up post discharge</p>
-                  <p>For immunization</p>
-                </div>
-              </div>
-            </div>
-            <div class="dropdown" id="dd-cc" style="position:relative; margin-top:16px;">
-              <div class="dropdown-trigger" onclick="toggleDD('dd-cc')">
-                <span id="cc-label">Short Label Only</span>
-                <svg class="dropdown-chevron" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6l4 4 4-4"/></svg>
-              </div>
-              <div class="dropdown-menu">
-                <div class="dropdown-option selected" onclick="pickCC(0)" onmouseenter="previewCC(0)">Short Label Only</div>
-                <div class="dropdown-option" onclick="pickCC(1)" onmouseenter="previewCC(1)">Brief with context added</div>
-                <div class="dropdown-option" onclick="pickCC(2)" onmouseenter="previewCC(2)">Narrative</div>
-                <div class="dropdown-option" onclick="pickCC(3)" onmouseenter="previewCC(3)">Patient-reported</div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Assessment -->
-        <div class="config-section">
-          <h2 class="section-heading">Assessment</h2>
-          <p class="section-desc">Display ICD-10 codes alongside each diagnosis in the Assessment.</p>
-          <div class="section-controls">
-            <div class="preview-box">
-              <div class="preview-label">PREVIEW</div>
-              <div id="assess-preview"></div>
-            </div>
-            <div class="radio-group" id="rg-assess" style="margin-top:24px;">
-              <label class="radio-label selected" onclick="pickAssess(true)">
-                <span class="radio-dot"><span class="radio-dot-inner"></span></span>
-                Yes
-              </label>
-              <label class="radio-label" onclick="pickAssess(false)">
-                <span class="radio-dot"><span class="radio-dot-inner"></span></span>
-                No
-              </label>
-            </div>
-          </div>
-        </div>
-
-        <!-- Diagnosis style -->
-        <div class="config-section">
-          <h2 class="section-heading">Diagnosis style</h2>
-          <p class="section-desc">Set the format for how diagnoses are written</p>
-          <div class="section-controls">
-            <div class="preview-box fixed">
-              <div class="preview-label">PREVIEW</div>
-              <div class="preview-content-area">
-                <div class="preview-text" id="ds-preview"></div>
-              </div>
-            </div>
-            <div class="dropdown" id="dd-ds" style="position:relative; margin-top:16px;">
-              <div class="dropdown-trigger" onclick="toggleDD('dd-ds')">
-                <span id="ds-label">Full terminology</span>
-                <svg class="dropdown-chevron" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6l4 4 4-4"/></svg>
-              </div>
-              <div class="dropdown-menu">
-                <div class="dropdown-option selected" onclick="pickDS(0)" onmouseenter="previewDS(0)">Full terminology</div>
-                <div class="dropdown-option" onclick="pickDS(1)" onmouseenter="previewDS(1)">Abbreviated</div>
-                <div class="dropdown-option" onclick="pickDS(2)" onmouseenter="previewDS(2)">Concise</div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Medication detail -->
-        <div class="config-section">
-          <h2 class="section-heading">Medication detail</h2>
-          <p class="section-desc">Control how medications appear in the plan section</p>
-          <div class="section-controls">
-            <div class="preview-box">
-              <div class="preview-label">PREVIEW</div>
-              <div class="preview-content-area">
-                <div id="med-preview"></div>
-              </div>
-            </div>
-            <div class="radio-group" id="rg-med" style="margin-top:24px;">
-              <label class="radio-label selected" onclick="pickMed(true)">
-                <span class="radio-dot"><span class="radio-dot-inner"></span></span>
-                Full
-              </label>
-              <label class="radio-label" onclick="pickMed(false)">
-                <span class="radio-dot"><span class="radio-dot-inner"></span></span>
-                Name and instruction only
-              </label>
-            </div>
-          </div>
-        </div>
-
-        <div style="height:40px"></div>
-      </div>
-    </div>
-  </div>
-</main>
-
-<script>
-const ccOptions = ['Short Label Only', 'Brief with context added', 'Narrative', 'Patient-reported'];
-const ccPreviews = [
-  '<p>Consult: Fever</p><p>Follow-up post discharge</p><p>For immunization</p>',
-  '<p>Consult: Fever</p><p>Fever for 3 days, highest temp 40\u00B0C,  associated with sore throat and fatigue</p>',
-  '<p>Patient presents with a 3-day history of fever up to 40\u00B0C, associated with sore throat and fatigue, no improvement with paracetamol.</p>',
-  '<p>\u201CI\u2019ve had a fever since Monday, my throat hurts, and the paracetamol isn\u2019t helping anymore.\u201D</p>'
-];
-
-const dsOptions = ['Full terminology', 'Abbreviated', 'Concise'];
-const dsPreviews = [
-  '<p>Upper respiratory tract infection with allergic component</p><p style="margin-top:12px">Chronic kidney disease stage 3 with secondary hypertension</p>',
-  '<p>CKD G3B;A1 c/ sec. HTN</p><p style="margin-top:12px">URTI c/ allergic comp.</p>',
-  '<p>CKD Stage 3 + Hypertension</p><p style="margin-top:12px">Acute nasopharyngitis + Allergic rhinitis</p>'
-];
-
-function assessHTML(showCodes) {
-  const tag = (code) => showCodes ? `<div><span class="icd-badge">${code}</span></div>` : '';
-  const desc = (text) => showCodes ? `<div class="assess-sub">${text}</div>` : '';
-  return `<div class="assess-cards">
-    <div class="assess-card">
-      ${tag('N18.3')}
-      <div class="assess-title">Chronic Kidney Disease, Stage 3</div>
-      ${desc('Moderate CKD with stable creatinine, eGFR 42 mL/min')}
-    </div>
-    <div class="assess-card">
-      ${tag('E79.0')}
-      <div class="assess-title">Hyperuricemia</div>
-      ${desc('Elevated uric acid, no signs of inflammatory arthritis')}
-    </div>
-  </div>`;
-}
-
-function medHTML(full) {
-  const items = full
-    ? ['Amoxicillin 500 mg 3\u00D7/day for 7 days','Omeprazole 1\u00D720 mg before breakfast','Continue Vitamin D 1\u00D71000 IU daily','Discontinue Fluimucil']
-    : ['Amoxicillin for infection','Omeprazole before breakfast','Continue Vitamin D','Discontinue Fluimucil'];
-  return `<div class="med-heading">Medications</div><ul class="med-list">${items.map(i=>'<li>'+i+'</li>').join('')}</ul>`;
-}
-
-// Dropdown
-function toggleDD(id) {
-  const el = document.getElementById(id);
-  const wasOpen = el.classList.contains('open');
-  closeAllDD();
-  if (!wasOpen) el.classList.add('open');
-}
-function closeAllDD() {
-  document.querySelectorAll('.dropdown.open').forEach(d => {
-    d.classList.remove('open');
-    // Restore previews to committed values
-    document.getElementById('cc-preview').innerHTML = ccPreviews[ccCommitted];
-    document.getElementById('ds-preview').innerHTML = dsPreviews[dsCommitted];
-  });
-}
-document.addEventListener('click', e => { if (!e.target.closest('.dropdown')) closeAllDD(); });
-
-// Live preview on hover
-let ccCommitted = 0, dsCommitted = 0;
-function previewCC(idx) {
-  document.getElementById('cc-preview').innerHTML = ccPreviews[idx];
-}
-function previewDS(idx) {
-  document.getElementById('ds-preview').innerHTML = dsPreviews[idx];
-}
-
-// Selections
-function pickCC(idx) {
-  ccCommitted = idx;
-  document.getElementById('cc-label').textContent = ccOptions[idx];
-  document.getElementById('cc-preview').innerHTML = ccPreviews[idx];
-  markSel('#dd-cc', idx);
-  closeAllDD();
-}
-function pickAssess(val) {
-  setRadio('#rg-assess', val ? 0 : 1);
-  document.getElementById('assess-preview').innerHTML = assessHTML(val);
-}
-function pickDS(idx) {
-  dsCommitted = idx;
-  document.getElementById('ds-label').textContent = dsOptions[idx];
-  document.getElementById('ds-preview').innerHTML = dsPreviews[idx];
-  markSel('#dd-ds', idx);
-  closeAllDD();
-}
-function pickMed(full) {
-  setRadio('#rg-med', full ? 0 : 1);
-  document.getElementById('med-preview').innerHTML = medHTML(full);
-}
-
-function markSel(sel, idx) {
-  document.querySelectorAll(sel + ' .dropdown-option').forEach((o, i) => o.classList.toggle('selected', i === idx));
-}
-function setRadio(sel, idx) {
-  document.querySelectorAll(sel + ' .radio-label').forEach((l, i) => l.classList.toggle('selected', i === idx));
-}
-
-// Init
-document.getElementById('assess-preview').innerHTML = assessHTML(true);
-document.getElementById('ds-preview').innerHTML = dsPreviews[0];
-document.getElementById('med-preview').innerHTML = medHTML(true);
-</script>
 </body>
 </html>
